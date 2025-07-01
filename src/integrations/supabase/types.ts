@@ -9,6 +9,83 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      business_plans: {
+        Row: {
+          business_name: string
+          created_at: string
+          current_challenges: string[] | null
+          current_channels: string[] | null
+          email: string
+          id: string
+          industry: string
+          monthly_budget: number
+          primary_goal: string
+          target_audience: string | null
+          team_size: string | null
+          timeframe: string
+        }
+        Insert: {
+          business_name: string
+          created_at?: string
+          current_challenges?: string[] | null
+          current_channels?: string[] | null
+          email: string
+          id?: string
+          industry: string
+          monthly_budget: number
+          primary_goal: string
+          target_audience?: string | null
+          team_size?: string | null
+          timeframe: string
+        }
+        Update: {
+          business_name?: string
+          created_at?: string
+          current_challenges?: string[] | null
+          current_channels?: string[] | null
+          email?: string
+          id?: string
+          industry?: string
+          monthly_budget?: number
+          primary_goal?: string
+          target_audience?: string | null
+          team_size?: string | null
+          timeframe?: string
+        }
+        Relationships: []
+      }
+      consultation_requests: {
+        Row: {
+          business_name: string
+          business_plan_id: string | null
+          email: string
+          id: string
+          requested_at: string
+        }
+        Insert: {
+          business_name: string
+          business_plan_id?: string | null
+          email: string
+          id?: string
+          requested_at?: string
+        }
+        Update: {
+          business_name?: string
+          business_plan_id?: string | null
+          email?: string
+          id?: string
+          requested_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_requests_business_plan_id_fkey"
+            columns: ["business_plan_id"]
+            isOneToOne: false
+            referencedRelation: "business_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           created_at: string

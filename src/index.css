@@ -40,41 +40,59 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-white text-[#3E3E3E] font-[-apple-system,BlinkMacSystemFont,'Segoe_UI',Roboto,sans-serif];
+    @apply bg-white text-[#3E3E3E] font-inter antialiased;
+    font-display: swap;
   }
 }
 
 @layer components {
   .hig-card {
-    @apply bg-white rounded-2xl shadow-sm border border-gray-100;
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 backdrop-blur-sm;
   }
   
   .hig-button-primary {
-    @apply bg-[#1FA2FF] text-white rounded-xl px-6 py-3 font-medium transition-all duration-200 hover:bg-[#1989E6] active:scale-95;
+    @apply bg-[#4A9EFF] text-white rounded-[32px] px-8 py-4 font-medium text-lg transition-all duration-300 hover:bg-[#3B8AE6] hover:shadow-lg hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#4A9EFF] focus:ring-opacity-50;
   }
   
   .hig-button-secondary {
-    @apply bg-gray-100 text-[#3E3E3E] rounded-xl px-6 py-3 font-medium transition-all duration-200 hover:bg-gray-200 active:scale-95;
+    @apply bg-gray-100 text-[#3E3E3E] rounded-xl px-6 py-3 font-medium transition-all duration-200 hover:bg-gray-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-300;
   }
   
   .hig-input {
-    @apply bg-gray-50 border-0 rounded-xl px-4 py-3 text-[#3E3E3E] transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#1FA2FF] focus:ring-opacity-50;
+    @apply bg-gray-50 border-0 rounded-xl px-4 py-3 text-[#3E3E3E] transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#4A9EFF] focus:ring-opacity-50 focus:outline-none;
+  }
+
+  .hero-title {
+    @apply text-5xl md:text-6xl lg:text-7xl font-bold text-[#3E3E3E] leading-[1.1] tracking-tight;
+  }
+
+  .hero-subtitle {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold text-[#4A9EFF] leading-[1.1] tracking-tight;
   }
   
   .slide-in {
-    animation: slideIn 0.5s ease-out;
+    animation: slideIn 0.6s ease-out;
   }
   
   .fade-in {
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn 0.4s ease-out;
   }
+
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
 }
 
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -89,4 +107,33 @@
   to {
     opacity: 1;
   }
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.contain-layout {
+  contain: layout;
+}
+
+.contain-style {
+  contain: style;
+}
+
+/* Critical above-the-fold styles */
+.hero-section {
+  contain: layout style;
+  transform: translateZ(0);
+}
+
+/* Lazy loading images */
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
 }

@@ -1,3 +1,8 @@
+
+User-agent: *
+Allow: /
+
+# Specific crawlers
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +15,8 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# SEO optimizations
+Sitemap: https://territorioux.cl/sitemap.xml
+
+# Performance
+Crawl-delay: 1

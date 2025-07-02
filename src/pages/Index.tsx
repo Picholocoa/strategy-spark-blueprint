@@ -89,16 +89,31 @@ export default function Index() {
   // Landing Page
   return (
     <div className="min-h-screen bg-white">
+      {/* Header de TerritorioUX */}
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <a href="https://territorioux.cl" className="text-xl font-bold text-[#3E3E3E]">
+                TerritorioUX
+              </a>
+            </div>
+            <nav className="hidden md:flex items-center space-x-8">
+              <a href="https://territorioux.cl/servicios" className="text-[#3E3E3E] hover:text-[#1FA2FF] transition-colors">Servicios</a>
+              <a href="https://territorioux.cl/portfolio" className="text-[#3E3E3E] hover:text-[#1FA2FF] transition-colors">Portfolio</a>
+              <a href="https://territorioux.cl/contacto" className="text-[#3E3E3E] hover:text-[#1FA2FF] transition-colors">Contacto</a>
+              <a href="https://territorioux.cl/contacto" className="hig-button-primary">Hablar con un experto</a>
+            </nav>
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center fade-in">
           <h1 className="text-5xl font-bold text-[#3E3E3E] mb-6 leading-tight">
-            Descubre qué tan efectiva es tu
-            <span className="text-[#1FA2FF]"> estrategia de marketing</span>
+            Análisis de marketing gratuito para empresas
           </h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            Análisis gratuito en 5 minutos. Obtén recomendaciones personalizadas para tu negocio.
-          </p>
           
           <Button 
             onClick={handleStartPlanner}
@@ -170,6 +185,47 @@ export default function Index() {
           </div>
         </div>
       </div>
+
+      {/* Footer de TerritorioUX */}
+      <footer className="bg-white border-t border-gray-100 py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h3 className="font-bold text-[#3E3E3E] mb-4">TerritorioUX</h3>
+              <p className="text-gray-600 text-sm">Especialistas en UX/UI y desarrollo web. Transformamos ideas en experiencias digitales excepcionales.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-[#3E3E3E] mb-4">Servicios</h4>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li><a href="https://territorioux.cl/servicios/ux-ui" className="hover:text-[#1FA2FF] transition-colors">UX/UI Design</a></li>
+                <li><a href="https://territorioux.cl/servicios/desarrollo" className="hover:text-[#1FA2FF] transition-colors">Desarrollo Web</a></li>
+                <li><a href="https://territorioux.cl/servicios/marketing" className="hover:text-[#1FA2FF] transition-colors">Marketing Digital</a></li>
+                <li><a href="https://territorioux.cl/servicios/consultoria" className="hover:text-[#1FA2FF] transition-colors">Consultoría</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-[#3E3E3E] mb-4">Empresa</h4>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li><a href="https://territorioux.cl/nosotros" className="hover:text-[#1FA2FF] transition-colors">Nosotros</a></li>
+                <li><a href="https://territorioux.cl/portfolio" className="hover:text-[#1FA2FF] transition-colors">Portfolio</a></li>
+                <li><a href="https://territorioux.cl/blog" className="hover:text-[#1FA2FF] transition-colors">Blog</a></li>
+                <li><a href="https://territorioux.cl/contacto" className="hover:text-[#1FA2FF] transition-colors">Contacto</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-[#3E3E3E] mb-4">Contacto</h4>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li>pedro@territorioux.cl</li>
+                <li>+56 9 1234 5678</li>
+                <li>Santiago, Chile</li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-100 pt-8 text-center text-sm text-gray-600">
+            <p>&copy; 2024 TerritorioUX. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

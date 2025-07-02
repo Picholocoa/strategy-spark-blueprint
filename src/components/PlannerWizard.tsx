@@ -25,6 +25,8 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
     currentChallenges: []
   });
 
+  const [emailError, setEmailError] = useState('');
+
   const industries = [
     "E-commerce", "Servicios Profesionales", "Restaurantes", "Tecnología", 
     "Salud", "Educación", "Inmobiliario", "Manufactura", "Retail", "Otro"
@@ -45,7 +47,35 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
     "Medir resultados", "Competencia fuerte", "Audiencia indefinida"
   ];
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const disposableEmailDomains = [
+      '10minutemail.com', 'tempmail.org', 'guerrillamail.com', 'mailinator.com',
+      'throwaway.email', 'temp-mail.org', 'getnada.com', 'yopmail.com'
+    ];
+    
+    if (!emailRegex.test(email)) {
+      return 'Por favor ingresa un email válido';
+    }
+    
+    const domain = email.split('@')[1]?.toLowerCase();
+    if (disposableEmailDomains.includes(domain)) {
+      return 'Por favor usa un email corporativo o personal válido';
+    }
+    
+    return '';
+  };
+
   const handleNext = () => {
+    if (currentStep === 1) {
+      const error = validateEmail(formData.email || '');
+      if (error) {
+        setEmailError(error);
+        return;
+      }
+      setEmailError('');
+    }
+
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -63,6 +93,9 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
 
   const updateFormData = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'email') {
+      setEmailError('');
+    }
   };
 
   const handleChannelChange = (channel: string, checked: boolean) => {
@@ -96,8 +129,9 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
                 value={formData.email || ''}
                 onChange={(e) => updateFormData('email', e.target.value)}
                 placeholder="tu@empresa.com"
-                className="hig-input mt-2"
+                className={`hig-input mt-2 ${emailError ? 'border-red-500' : ''}`}
               />
+              {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
               <p className="text-sm text-gray-500 mt-2">Para enviarte tu análisis personalizado</p>
             </div>
             <div>
@@ -120,7 +154,7 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
               <Label className="text-lg font-medium text-[#3E3E3E]">Industria</Label>
               <Select value={formData.industry || ''} onValueChange={(value) => updateFormData('industry', value)}>
                 <SelectTrigger className="hig-input mt-2">
-                  <SelectValue placeholder="Selecciona" />
+                  <SelectValue placeholder="Selecciona tu industria" />
                 </SelectTrigger>
                 <SelectContent>
                   {industries.map(industry => (
@@ -135,7 +169,7 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
                 id="targetAudience"
                 value={formData.targetAudience || ''}
                 onChange={(e) => updateFormData('targetAudience', e.target.value)}
-                placeholder="Ej: Mujeres 25-45 años, profesionales..."
+                placeholder="Ej: Mujeres 25-45 años, profesionales con ingresos medio-alto..."
                 className="hig-input mt-2 min-h-[100px]"
               />
             </div>
@@ -146,7 +180,10 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
         return (
           <div className="space-y-6 slide-in">
             <div>
-              <Label className="text-lg font-medium text-[#3E3E3E] mb-4 block">Canales que usas actualmente</Label>
+              <Label className="text-lg font-medium text-[#3E3E3E] mb-4 block">
+                Canales que usas actualmente
+                <span className="text-sm text-gray-500 font-normal block mt-1">Puedes seleccionar múltiples opciones</span>
+              </Label>
               <div className="grid grid-cols-2 gap-3">
                 {channels.map(channel => (
                   <div key={channel} className="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">
@@ -170,14 +207,14 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
               <Label className="text-lg font-medium text-[#3E3E3E]">Presupuesto mensual para marketing</Label>
               <Select value={formData.monthlyBudget?.toString() || ''} onValueChange={(value) => updateFormData('monthlyBudget', parseInt(value))}>
                 <SelectTrigger className="hig-input mt-2">
-                  <SelectValue placeholder="Selecciona rango" />
+                  <SelectValue placeholder="Selecciona tu rango de presupuesto" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="500">Menos de $500</SelectItem>
-                  <SelectItem value="2000">$500 - $2,000</SelectItem>
-                  <SelectItem value="5000">$2,000 - $5,000</SelectItem>
-                  <SelectItem value="10000">$5,000 - $10,000</SelectItem>
-                  <SelectItem value="20000">Más de $10,000</SelectItem>
+                  <SelectItem value="400000">Menos de $400.000 CLP</SelectItem>
+                  <SelectItem value="1600000">$400.000 - $1.600.000 CLP</SelectItem>
+                  <SelectItem value="4000000">$1.600.000 - $4.000.000 CLP</SelectItem>
+                  <SelectItem value="8000000">$4.000.000 - $8.000.000 CLP</SelectItem>
+                  <SelectItem value="16000000">Más de $8.000.000 CLP</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -185,7 +222,7 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
               <Label className="text-lg font-medium text-[#3E3E3E]">Objetivo principal</Label>
               <Select value={formData.primaryGoal || ''} onValueChange={(value) => updateFormData('primaryGoal', value)}>
                 <SelectTrigger className="hig-input mt-2">
-                  <SelectValue placeholder="¿Qué quieres lograr?" />
+                  <SelectValue placeholder="¿Qué quieres lograr principalmente?" />
                 </SelectTrigger>
                 <SelectContent>
                   {goals.map(goal => (
@@ -201,7 +238,10 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
         return (
           <div className="space-y-6 slide-in">
             <div>
-              <Label className="text-lg font-medium text-[#3E3E3E] mb-4 block">Principales desafíos</Label>
+              <Label className="text-lg font-medium text-[#3E3E3E] mb-4 block">
+                Principales desafíos
+                <span className="text-sm text-gray-500 font-normal block mt-1">Puedes seleccionar múltiples opciones</span>
+              </Label>
               <div className="grid grid-cols-1 gap-3">
                 {challenges.map(challenge => (
                   <div key={challenge} className="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">
@@ -225,7 +265,7 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
               <Label className="text-lg font-medium text-[#3E3E3E]">¿En cuánto tiempo esperas resultados?</Label>
               <Select value={formData.timeframe || ''} onValueChange={(value) => updateFormData('timeframe', value)}>
                 <SelectTrigger className="hig-input mt-2">
-                  <SelectValue placeholder="Selecciona plazo" />
+                  <SelectValue placeholder="Selecciona tu expectativa de tiempo" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1-3 meses">1-3 meses</SelectItem>
@@ -246,7 +286,7 @@ export const PlannerWizard = ({ onComplete, onBack }: PlannerWizardProps) => {
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return formData.email && formData.businessName;
+        return formData.email && formData.businessName && !emailError;
       case 2:
         return formData.industry && formData.targetAudience;
       case 3:

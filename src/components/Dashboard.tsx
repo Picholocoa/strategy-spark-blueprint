@@ -1,11 +1,11 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Calendar, Target, TrendingUp, Users, 
-  DollarSign, AlertTriangle, CheckCircle, Zap, Phone
+  DollarSign, AlertTriangle, CheckCircle, Zap, Phone,
+  BarChart3, Clock, Percent, Activity
 } from 'lucide-react';
 import { BusinessData } from '@/pages/Index';
 import { BudgetChart } from '@/components/BudgetChart';
@@ -22,7 +22,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const { toast } = useToast();
 
-  // Análisis simplificado y enfocado en venta
+  // Análisis completo con más métricas
   const getAnalysis = () => {
     const budget = businessData.monthlyBudget;
     const channelCount = businessData.currentChannels.length;
@@ -32,33 +32,105 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
     let score = 0;
     let insight = '';
     let urgency = '';
+    let efficiency = 0;
+    let growth_potential = 0;
+    let risk_level = '';
 
-    // Scoring básico
-    if (budget < 2000) score += 20;
-    else if (budget < 5000) score += 50;
-    else score += 80;
-
-    if (channelCount < 3) score += 20;
-    else if (channelCount < 5) score += 40;
-    else score += 60;
-
-    if (challengeCount > 3) score -= 20;
-
-    if (score < 40) {
-      scoreColor = 'text-red-500';
-      insight = 'Tu estrategia actual tiene gaps importantes que están limitando tu crecimiento.';
-      urgency = 'Crítico';
-    } else if (score < 70) {
-      scoreColor = 'text-orange-500';
-      insight = 'Hay oportunidades claras para optimizar tu inversión y resultados.';
-      urgency = 'Alto';
+    // Scoring más detallado
+    if (budget < 2000) {
+      score += 20;
+      efficiency = 35;
+      growth_potential = 45;
+    } else if (budget < 5000) {
+      score += 50;
+      efficiency = 60;
+      growth_potential = 70;
     } else {
-      scoreColor = 'text-green-500';
-      insight = 'Tu estrategia tiene buena base, pero podría ser más eficiente.';
-      urgency = 'Medio';
+      score += 80;
+      efficiency = 80;
+      growth_potential = 85;
     }
 
-    return { score, scoreColor, insight, urgency };
+    if (channelCount < 3) {
+      score += 20;
+      efficiency -= 15;
+    } else if (channelCount < 5) {
+      score += 40;
+      efficiency -= 5;
+    } else {
+      score += 60;
+    }
+
+    if (challengeCount > 3) {
+      score -= 20;
+      efficiency -= 20;
+      growth_potential -= 15;
+    }
+
+    // Calcular nivel de riesgo
+    if (score < 40) {
+      scoreColor = 'text-red-500';
+      insight = 'Tu estrategia actual tiene gaps críticos que limitan el crecimiento.';
+      urgency = 'Crítico';
+      risk_level = 'Alto';
+    } else if (score < 70) {
+      scoreColor = 'text-orange-500';
+      insight = 'Hay oportunidades claras para optimizar tu ROI.';
+      urgency = 'Alto';
+      risk_level = 'Medio';
+    } else {
+      scoreColor = 'text-green-500';
+      insight = 'Buena base, pero puede ser más eficiente.';
+      urgency = 'Medio';
+      risk_level = 'Bajo';
+    }
+
+    return { score, scoreColor, insight, urgency, efficiency, growth_potential, risk_level };
+  };
+
+  const getMarketingMetrics = () => {
+    const budget = businessData.monthlyBudget;
+    const channelCount = businessData.currentChannels.length;
+    
+    // Calcular métricas comparativas
+    const industry_avg_roi = budget < 2000 ? 300 : budget < 5000 ? 400 : 500;
+    const projected_roi = Math.round(industry_avg_roi * (channelCount / 7) * 0.6);
+    const potential_roi = industry_avg_roi;
+    const roi_gap = potential_roi - projected_roi;
+    
+    const conversion_rate = channelCount < 3 ? 1.2 : channelCount < 5 ? 2.1 : 3.5;
+    const industry_avg_conversion = 4.2;
+    
+    const lead_cost = budget < 2000 ? 45 : budget < 5000 ? 35 : 25;
+    const industry_avg_lead_cost = 30;
+    
+    return {
+      projected_roi,
+      potential_roi,
+      roi_gap,
+      conversion_rate,
+      industry_avg_conversion,
+      lead_cost,
+      industry_avg_lead_cost
+    };
+  };
+
+  const getCompetitiveAnalysis = () => {
+    const channelCount = businessData.currentChannels.length;
+    const budget = businessData.monthlyBudget;
+    
+    let market_share_potential = 'Limitado';
+    let competitive_advantage = 'Bajo';
+    
+    if (channelCount >= 5 && budget >= 5000) {
+      market_share_potential = 'Alto';
+      competitive_advantage = 'Alto';
+    } else if (channelCount >= 3 && budget >= 2000) {
+      market_share_potential = 'Medio';
+      competitive_advantage = 'Medio';
+    }
+    
+    return { market_share_potential, competitive_advantage };
   };
 
   const getBudgetAllocation = () => {
@@ -93,14 +165,14 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
       recs.push({
         title: 'Optimiza tu presencia orgánica',
         impact: 'Alto',
-        description: 'Con tu presupuesto actual, el ROI más alto viene de SEO y contenido.',
+        description: 'El ROI más alto viene de SEO y contenido.',
         icon: <TrendingUp className="h-5 w-5" />
       });
     } else {
       recs.push({
         title: 'Implementa campañas pagadas',
         impact: 'Muy Alto',
-        description: 'Tu presupuesto permite escalar con publicidad digital efectiva.',
+        description: 'Escala con publicidad digital efectiva.',
         icon: <Zap className="h-5 w-5" />
       });
     }
@@ -109,7 +181,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
       recs.push({
         title: 'Estrategia multicanal',
         impact: 'Alto',
-        description: 'Necesitas una estrategia clara para optimizar tus canales.',
+        description: 'Necesitas una estrategia clara.',
         icon: <Target className="h-5 w-5" />
       });
     }
@@ -118,7 +190,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
       recs.push({
         title: 'Sistema de tracking',
         impact: 'Crítico',
-        description: 'Sin medición no puedes optimizar tu inversión.',
+        description: 'Sin medición no puedes optimizar.',
         icon: <AlertTriangle className="h-5 w-5" />
       });
     }
@@ -168,6 +240,8 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
   };
 
   const analysis = getAnalysis();
+  const metrics = getMarketingMetrics();
+  const competitive = getCompetitiveAnalysis();
   const recommendations = getRecommendations();
 
   if (showConfirmation) {
@@ -236,8 +310,8 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
           </CardContent>
         </Card>
 
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Key Metrics - Expandido */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="hig-card slide-in">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -255,11 +329,11 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Canales Activos</p>
-                  <p className="text-2xl font-bold text-[#3E3E3E]">{businessData.currentChannels.length}</p>
-                  <p className="text-xs text-gray-500">de 7 principales</p>
+                  <p className="text-sm text-gray-600">Eficiencia Actual</p>
+                  <p className="text-2xl font-bold text-[#3E3E3E]">{analysis.efficiency}%</p>
+                  <p className="text-xs text-gray-500">vs. industria</p>
                 </div>
-                <Users className="h-8 w-8 text-[#1FA2FF]" />
+                <Activity className="h-8 w-8 text-[#1FA2FF]" />
               </div>
             </CardContent>
           </Card>
@@ -268,11 +342,101 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Objetivo</p>
-                  <p className="text-lg font-semibold text-[#3E3E3E]">{businessData.primaryGoal}</p>
-                  <p className="text-xs text-gray-500">{businessData.timeframe}</p>
+                  <p className="text-sm text-gray-600">Potencial Crecimiento</p>
+                  <p className="text-2xl font-bold text-[#3E3E3E]">{analysis.growth_potential}%</p>
+                  <p className="text-xs text-gray-500">proyectado</p>
                 </div>
-                <Target className="h-8 w-8 text-[#1FA2FF]" />
+                <TrendingUp className="h-8 w-8 text-[#1FA2FF]" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hig-card slide-in">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Nivel de Riesgo</p>
+                  <p className="text-2xl font-bold text-[#3E3E3E]">{analysis.risk_level}</p>
+                  <p className="text-xs text-gray-500">competitivo</p>
+                </div>
+                <AlertTriangle className="h-8 w-8 text-[#1FA2FF]" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* ROI & Performance Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="hig-card slide-in">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-medium text-[#3E3E3E]">ROI Proyectado</h4>
+                <Percent className="h-5 w-5 text-[#1FA2FF]" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Actual</span>
+                  <span className="font-semibold">{metrics.projected_roi}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Potencial</span>
+                  <span className="font-semibold text-green-600">{metrics.potential_roi}%</span>
+                </div>
+                <div className="pt-2 border-t">
+                  <span className="text-sm font-medium text-orange-600">
+                    Gap: {metrics.roi_gap}% de oportunidad
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hig-card slide-in">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-medium text-[#3E3E3E]">Conversión</h4>
+                <BarChart3 className="h-5 w-5 text-[#1FA2FF]" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Tu tasa</span>
+                  <span className="font-semibold">{metrics.conversion_rate}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Promedio industria</span>
+                  <span className="font-semibold">{metrics.industry_avg_conversion}%</span>
+                </div>
+                <div className="pt-2 border-t">
+                  <span className="text-sm font-medium text-red-600">
+                    {metrics.conversion_rate < metrics.industry_avg_conversion ? 'Bajo promedio' : 'Sobre promedio'}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hig-card slide-in">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-medium text-[#3E3E3E]">Costo por Lead</h4>
+                <DollarSign className="h-5 w-5 text-[#1FA2FF]" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Tu costo</span>
+                  <span className="font-semibold">${metrics.lead_cost}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Promedio industria</span>
+                  <span className="font-semibold">${metrics.industry_avg_lead_cost}</span>
+                </div>
+                <div className="pt-2 border-t">
+                  <span className={`text-sm font-medium ${
+                    metrics.lead_cost > metrics.industry_avg_lead_cost ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    {metrics.lead_cost > metrics.industry_avg_lead_cost ? 'Sobre promedio' : 'Bajo promedio'}
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -290,27 +454,71 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
             </CardContent>
           </Card>
 
-          {/* Recommendations */}
+          {/* Competitive Analysis */}
           <Card className="hig-card slide-in">
             <CardHeader>
-              <CardTitle className="text-xl text-[#3E3E3E]">Acciones Prioritarias</CardTitle>
+              <CardTitle className="text-xl text-[#3E3E3E]">Análisis Competitivo</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {recommendations.map((rec, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-xl">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      {rec.icon}
-                      <h4 className="font-medium text-[#3E3E3E]">{rec.title}</h4>
-                    </div>
-                    <Badge className="bg-[#1FA2FF] text-white">{rec.impact}</Badge>
-                  </div>
-                  <p className="text-sm text-gray-600">{rec.description}</p>
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium text-[#3E3E3E]">Potencial de Mercado</span>
+                  <Badge className={`${
+                    competitive.market_share_potential === 'Alto' ? 'bg-green-100 text-green-700' :
+                    competitive.market_share_potential === 'Medio' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                    {competitive.market_share_potential}
+                  </Badge>
                 </div>
-              ))}
+                <p className="text-sm text-gray-600">Capacidad de capturar cuota de mercado</p>
+              </div>
+              
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium text-[#3E3E3E]">Ventaja Competitiva</span>
+                  <Badge className={`${
+                    competitive.competitive_advantage === 'Alto' ? 'bg-green-100 text-green-700' :
+                    competitive.competitive_advantage === 'Medio' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                    {competitive.competitive_advantage}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-600">Diferenciación vs. competidores</p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium text-[#3E3E3E]">Tiempo de Implementación</span>
+                  <Badge className="bg-[#1FA2FF] text-white">3-6 meses</Badge>
+                </div>
+                <p className="text-sm text-gray-600">Para ver resultados óptimos</p>
+              </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Recommendations */}
+        <Card className="hig-card slide-in mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl text-[#3E3E3E]">Acciones Prioritarias</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {recommendations.map((rec, index) => (
+              <div key={index} className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    {rec.icon}
+                    <h4 className="font-medium text-[#3E3E3E]">{rec.title}</h4>
+                  </div>
+                  <Badge className="bg-[#1FA2FF] text-white">{rec.impact}</Badge>
+                </div>
+                <p className="text-sm text-gray-600">{rec.description}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
         {/* CTA Section */}
         <Card className="hig-card slide-in">

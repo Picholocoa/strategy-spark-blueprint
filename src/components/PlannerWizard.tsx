@@ -107,8 +107,12 @@ export const PlannerWizard = ({ onComplete }: PlannerWizardProps) => {
       description: 'Define tu inversión y metas'
     },
     {
-      title: 'Situación Actual',
-      description: 'Canales y desafíos actuales'
+      title: 'Canales Actuales',
+      description: 'Qué canales usas actualmente'
+    },
+    {
+      title: 'Desafíos y Obstáculos',
+      description: 'Identifica tus principales retos'
     },
     {
       title: 'Planificación',
@@ -146,8 +150,10 @@ export const PlannerWizard = ({ onComplete }: PlannerWizardProps) => {
       case 1:
         return formData.monthlyBudget !== undefined && formData.primaryGoal;
       case 2:
-        return formData.currentChannels.length > 0 && formData.currentChallenges.length > 0;
+        return formData.currentChannels.length > 0;
       case 3:
+        return formData.currentChallenges.length > 0;
+      case 4:
         return formData.timeframe && formData.teamSize;
       default:
         return false;
@@ -267,6 +273,12 @@ export const PlannerWizard = ({ onComplete }: PlannerWizardProps) => {
                 ))}
               </div>
             </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
             <div>
               <Label>Principales desafíos *</Label>
               <p className="text-sm text-gray-600 mb-3">¿Qué te genera más dificultades?</p>
@@ -286,7 +298,7 @@ export const PlannerWizard = ({ onComplete }: PlannerWizardProps) => {
           </div>
         );
 
-      case 3:
+      case 4:
         return (
           <div className="space-y-6">
             <div>

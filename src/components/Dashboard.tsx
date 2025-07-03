@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Calendar, Target, TrendingUp, Users, 
   DollarSign, AlertTriangle, CheckCircle, Zap, Phone,
-  BarChart3, Clock, Percent, Activity, Info, HelpCircle
+  BarChart3, Clock, Percent, Activity, Info, HelpCircle,
+  PlayCircle, CheckSquare, Timer
 } from 'lucide-react';
 import { BusinessData } from '@/pages/Index';
 import { BudgetChart } from '@/components/BudgetChart';
@@ -17,6 +18,40 @@ interface DashboardProps {
   businessData: BusinessData;
   onBackToStart: () => void;
 }
+
+// Benchmarks actualizados del mercado chileno 2025
+const industryBenchmarks = {
+  'E-commerce': { 
+    baseConversion: 2.8,
+    avgTicket: 45000,
+    customerLifetime: 8,
+    competitionLevel: 'Alto'
+  },
+  'Servicios Profesionales': { 
+    baseConversion: 4.2,
+    avgTicket: 280000,
+    customerLifetime: 18,
+    competitionLevel: 'Medio'
+  },
+  'Tecnología': { 
+    baseConversion: 1.8,
+    avgTicket: 150000,
+    customerLifetime: 24,
+    competitionLevel: 'Muy Alto'
+  },
+  'Salud': { 
+    baseConversion: 3.5,
+    avgTicket: 65000,
+    customerLifetime: 12,
+    competitionLevel: 'Alto'
+  },
+  'Educación': { 
+    baseConversion: 2.1,
+    avgTicket: 120000,
+    customerLifetime: 6,
+    competitionLevel: 'Medio'
+  }
+};
 
 export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
   const [isRequesting, setIsRequesting] = useState(false);
@@ -46,50 +81,16 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
       };
     }
 
-    // Benchmarks actualizados del mercado chileno 2025
-    const industryBenchmarks = {
-      'E-commerce': { 
-        baseConversion: 2.8, // % de conversión típica
-        avgTicket: 45000, // ticket promedio en CLP
-        customerLifetime: 8, // meses de vida útil
-        competitionLevel: 'Alto'
-      },
-      'Servicios Profesionales': { 
-        baseConversion: 4.2,
-        avgTicket: 280000, // servicio promedio
-        customerLifetime: 18,
-        competitionLevel: 'Medio'
-      },
-      'Tecnología': { 
-        baseConversion: 1.8,
-        avgTicket: 150000,
-        customerLifetime: 24,
-        competitionLevel: 'Muy Alto'
-      },
-      'Salud': { 
-        baseConversion: 3.5,
-        avgTicket: 65000,
-        customerLifetime: 12,
-        competitionLevel: 'Alto'
-      },
-      'Educación': { 
-        baseConversion: 2.1,
-        avgTicket: 120000,
-        customerLifetime: 6,
-        competitionLevel: 'Medio'
-      }
-    };
-
     const benchmark = industryBenchmarks[industry as keyof typeof industryBenchmarks] || 
                      industryBenchmarks['Servicios Profesionales'];
 
-    // Factor de madurez digital basado en presupuesto (escala real de mercado chileno)
-    let digitalMaturity = 0.3; // Base para empresas pequeñas
-    if (budget >= 600000) digitalMaturity = 0.5; // Pequeña empresa establecida
-    if (budget >= 1200000) digitalMaturity = 0.7; // Mediana empresa
-    if (budget >= 2800000) digitalMaturity = 0.9; // Gran empresa
+    // Factor de madurez digital basado en presupuesto
+    let digitalMaturity = 0.3;
+    if (budget >= 600000) digitalMaturity = 0.5;
+    if (budget >= 1200000) digitalMaturity = 0.7;
+    if (budget >= 2800000) digitalMaturity = 0.9;
 
-    // Eficiencia de canales (más realista)
+    // Eficiencia de canales
     const optimalChannelsForIndustry = {
       'E-commerce': ['Google Ads', 'Facebook Ads', 'Instagram', 'Email Marketing'],
       'Servicios Profesionales': ['Google Ads', 'LinkedIn Ads', 'SEO', 'Referidos'],
@@ -104,31 +105,31 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
     const currentOptimalChannels = businessData.currentChannels.filter(c => 
       optimalChannels.includes(c) && c !== 'Ninguno actualmente'
     );
-    const channelEfficiency = Math.min(currentOptimalChannels.length / 2, 1); // Máximo 100% con 2+ canales óptimos
+    const channelEfficiency = Math.min(currentOptimalChannels.length / 2, 1);
 
-    // Penalizaciones por desafíos (más específicas)
+    // Penalizaciones por desafíos
     let challengePenalty = 1.0;
     const criticalChallenges = ['Medir resultados', 'Generar leads de calidad'];
     const hasCriticalChallenges = businessData.currentChallenges.some(c => criticalChallenges.includes(c));
     if (hasCriticalChallenges) challengePenalty -= 0.2;
     if (challengeCount > 4) challengePenalty -= 0.1;
 
-    // Score estratégico (más conservador y realista)
-    let strategicScore = 30; // Base realista
-    strategicScore += digitalMaturity * 25; // Hasta 25 puntos por madurez
-    strategicScore += channelEfficiency * 20; // Hasta 20 puntos por canales
-    strategicScore += (primaryGoal === 'Aumentar ventas' ? 5 : 0); // Boost por objetivo claro
+    // Score estratégico
+    let strategicScore = 30;
+    strategicScore += digitalMaturity * 25;
+    strategicScore += channelEfficiency * 20;
+    strategicScore += (primaryGoal === 'Aumentar ventas' ? 5 : 0);
     strategicScore *= challengePenalty;
-    strategicScore = Math.min(85, Math.max(15, Math.round(strategicScore))); // Máximo realista de 85
+    strategicScore = Math.min(85, Math.max(15, Math.round(strategicScore)));
 
-    // Eficiencia actual (más conservadora)
+    // Eficiencia actual
     const currentEfficiency = Math.round(digitalMaturity * channelEfficiency * challengePenalty * 100);
     
-    // Potencial de crecimiento (más realista)
-    const maxPotential = 75; // Ser más conservadores
+    // Potencial de crecimiento
+    const maxPotential = 75;
     const growthPotential = Math.min(65, Math.round(maxPotential - currentEfficiency));
 
-    // Colores e insights más honestos
+    // Colores e insights
     let scoreColor = '';
     let insight = '';
     let urgency = '';
@@ -182,24 +183,20 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
     const benchmark = analysis.benchmark;
     const efficiencyFactor = analysis.efficiency / 100;
     
-    // Cálculos más realistas y transparentes
-    const adSpendPortion = budget * 0.7; // 70% del presupuesto en ads
-    const avgCostPerClick = 450; // CPC promedio Chile 2025
+    // Cálculos más realistas
+    const adSpendPortion = budget * 0.7;
+    const avgCostPerClick = 450;
     const clicksPerMonth = Math.round(adSpendPortion / avgCostPerClick);
     
-    // Leads basados en conversión real
     const conversionRate = benchmark.baseConversion * efficiencyFactor;
     const projectedLeads = Math.round(clicksPerMonth * (conversionRate / 100));
     
-    // Costo por lead real
     const leadCost = projectedLeads > 0 ? Math.round(adSpendPortion / projectedLeads) : 0;
     
-    // Revenue proyectado (más conservador)
-    const closeRate = 0.15; // 15% de leads se convierten en clientes (conservador)
+    const closeRate = 0.15;
     const newCustomers = Math.round(projectedLeads * closeRate);
     const monthlyRevenue = newCustomers * benchmark.avgTicket;
     
-    // ROI más realista
     const roi = budget > 0 ? Math.round(((monthlyRevenue - budget) / budget) * 100) : 0;
     
     return {
@@ -227,7 +224,6 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
       };
     }
     
-    // Análisis competitivo más realista
     const competitivenessScore = analysis.efficiency;
     
     let marketSharePotential = 'Limitado';
@@ -255,7 +251,6 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
   const getBudgetAllocation = () => {
     const budget = businessData.monthlyBudget;
     const industry = businessData.industry;
-    const primaryGoal = businessData.primaryGoal;
     
     if (budget === 0) {
       return [
@@ -308,53 +303,124 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
     ];
   };
 
-  const getRecommendations = () => {
+  const getDetailedRecommendations = () => {
     const analysis = getAnalysis();
     const metrics = getMarketingMetrics();
+    const budget = businessData.monthlyBudget;
     const recs = [];
 
     if (!analysis.hasBudget) {
       recs.push({
         title: 'Definir presupuesto de marketing',
-        impact: 'Crítico',
+        priority: 'Crítico',
         description: 'Sin presupuesto definido no podemos generar proyecciones específicas ni recomendaciones de canales.',
-        icon: <DollarSign className="h-5 w-5" />,
-        timeframe: 'Inmediato'
+        actions: [
+          'Analizar ingresos actuales y definir % para marketing (recomendado: 5-15%)',
+          'Investigar costos promedio en tu industria',
+          'Comenzar con presupuesto mínimo de $400.000 mensuales'
+        ],
+        timeframe: 'Esta semana',
+        impact: 'Permite planificación estratégica real',
+        icon: <DollarSign className="h-5 w-5" />
       });
       return recs;
     }
 
+    // Recomendaciones específicas basadas en análisis
     if (businessData.currentChallenges.includes('Medir resultados')) {
       recs.push({
-        title: 'Implementar sistema de medición',
-        impact: 'Crítico',
-        description: 'Configurar Google Analytics 4, Facebook Pixel y seguimiento de conversiones para optimizar campañas.',
-        icon: <BarChart3 className="h-5 w-5" />,
-        timeframe: '2-3 semanas'
+        title: 'Implementar sistema de medición completo',
+        priority: 'Crítico',
+        description: 'Sin medición adecuada, es imposible optimizar campañas y ROI.',
+        actions: [
+          'Configurar Google Analytics 4 con eventos de conversión',
+          'Instalar Facebook Pixel y configurar seguimiento',
+          'Crear dashboard en Google Data Studio',
+          'Definir KPIs principales: CAC, LTV, ROAS'
+        ],
+        timeframe: '2-3 semanas',
+        impact: 'Mejora ROI en 25-40% mediante optimización',
+        icon: <BarChart3 className="h-5 w-5" />
       });
     }
 
-    if (analysis.channelEfficiency < 0.5) {
+    if (analysis.channelEfficiency < 0.5 || businessData.currentChannels.includes('Ninguno actualmente')) {
+      const optimalChannels = {
+        'E-commerce': 'Google Ads + Facebook/Instagram',
+        'Servicios Profesionales': 'Google Ads + LinkedIn',
+        'Tecnología': 'LinkedIn + Google Ads',
+        'Salud': 'Google Ads + SEO local',
+        'Educación': 'Facebook + Instagram'
+      };
+      
       recs.push({
-        title: 'Optimizar mix de canales',
-        impact: 'Alto',
-        description: `Actualmente usas ${businessData.currentChannels.length} canales. Te recomendamos enfocar en los más efectivos para tu industria.`,
-        icon: <Target className="h-5 w-5" />,
-        timeframe: '1-2 meses'
+        title: 'Optimizar mix de canales de marketing',
+        priority: 'Alto',
+        description: `Para ${businessData.industry}, los canales más efectivos son diferentes a los que usas actualmente.`,
+        actions: [
+          `Priorizar: ${optimalChannels[businessData.industry as keyof typeof optimalChannels] || 'Google Ads + Redes Sociales'}`,
+          'Pausar canales con bajo rendimiento',
+          'Redistribuir 70% del presupuesto a canales top',
+          'Testear nuevos canales con 20% del presupuesto'
+        ],
+        timeframe: '1-2 meses',
+        impact: `Potencial mejora de ${Math.round((1 - analysis.channelEfficiency) * 50)}% en eficiencia`,
+        icon: <Target className="h-5 w-5" />
       });
     }
 
     if (businessData.monthlyBudget < 600000 && businessData.primaryGoal === 'Aumentar ventas') {
       recs.push({
-        title: 'Evaluar incremento de inversión',
-        impact: 'Medio',
-        description: 'Con presupuesto actual será difícil competir efectivamente. Considera aumentar gradualmente.',
-        icon: <TrendingUp className="h-5 w-5" />,
-        timeframe: '3-6 meses'
+        title: 'Evaluar incremento estratégico de inversión',
+        priority: 'Medio',
+        description: 'Con el presupuesto actual será difícil competir efectivamente en tu mercado.',
+        actions: [
+          'Calcular LTV promedio de clientes actuales',
+          'Definir CAC objetivo (máximo 30% del LTV)',
+          'Aumentar gradualmente: +50% primer mes, evaluar resultados',
+          'Considerar financiamiento para marketing si ROI > 200%'
+        ],
+        timeframe: '3-6 meses',
+        impact: 'Acceso a mayor volumen de leads cualificados',
+        icon: <TrendingUp className="h-5 w-5" />
       });
     }
 
-    return recs.slice(0, 3);
+    if (businessData.currentChallenges.includes('Generar leads de calidad')) {
+      recs.push({
+        title: 'Mejorar calidad de leads y conversiones',
+        priority: 'Alto',
+        description: 'Optimizar el funnel completo desde tráfico hasta venta.',
+        actions: [
+          'Crear landing pages específicas por canal',
+          'Implementar lead scoring automático',
+          'Desarrollar secuencia de email nurturing',
+          'A/B testear formularios y CTAs'
+        ],
+        timeframe: '4-6 semanas',
+        impact: 'Mejora tasa de conversión en 15-30%',
+        icon: <Users className="h-5 w-5" />
+      });
+    }
+
+    if (businessData.currentChallenges.includes('Crear contenido consistente')) {
+      recs.push({
+        title: 'Crear sistema de contenido escalable',
+        priority: 'Medio',
+        description: 'El contenido consistente es clave para mantener engagement y autoridad.',
+        actions: [
+          'Desarrollar calendario editorial mensual',
+          'Crear templates reutilizables',
+          'Definir 3-5 pilares de contenido principales',
+          'Automatizar publicación con herramientas como Buffer'
+        ],
+        timeframe: '3-4 semanas',
+        impact: 'Reduce tiempo de creación en 60% y mejora consistencia',
+        icon: <CheckSquare className="h-5 w-5" />
+      });
+    }
+
+    return recs.slice(0, 4); // Máximo 4 recomendaciones principales
   };
 
   const handleConsultationRequest = async () => {
@@ -399,7 +465,19 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
   const analysis = getAnalysis();
   const metrics = getMarketingMetrics();
   const competitive = getCompetitiveAnalysis();
-  const recommendations = getRecommendations();
+  const recommendations = getDetailedRecommendations();
+
+  // Función para formatear números con color rojo si son negativos
+  const formatNumberWithColor = (num: number | string, isPercentage: boolean = false) => {
+    if (num === 'N/A' || num === null || num === undefined) return 'N/A';
+    
+    const numValue = typeof num === 'string' ? parseFloat(num) : num;
+    const isNegative = numValue < 0;
+    const colorClass = isNegative ? 'text-red-500' : 'text-[#3E3E3E]';
+    const formattedNum = isPercentage ? `${numValue}%` : numValue;
+    
+    return <span className={colorClass}>{formattedNum}</span>;
+  };
 
   if (showConfirmation) {
     return (
@@ -442,7 +520,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
           </div>
         </div>
 
-        {/* Score Card with detailed explanation */}
+        {/* Score Card */}
         <Card className="hig-card mb-8 slide-in">
           <CardContent className="p-8">
             <div className="flex items-center justify-between mb-4">
@@ -465,7 +543,6 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
               <HelpCircle className="h-12 w-12 text-[#1FA2FF]" />
             </div>
             
-            {/* Detailed explanation */}
             <div className="mt-6 p-4 bg-gray-50 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <Info className="h-4 w-4 text-[#1FA2FF]" />
@@ -485,7 +562,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
           </CardContent>
         </Card>
 
-        {/* Key Metrics with explanations */}
+        {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="hig-card slide-in">
             <CardContent className="p-6">
@@ -520,8 +597,8 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">ROI Proyectado</p>
-                  <p className="text-2xl font-bold text-[#3E3E3E]">
-                    {metrics.roi_projection === 'N/A' ? 'N/A' : `${metrics.roi_projection}%`}
+                  <p className="text-2xl font-bold">
+                    {metrics.roi_projection === 'N/A' ? 'N/A' : formatNumberWithColor(metrics.roi_projection, true)}
                   </p>
                   <p className="text-xs text-gray-500">retorno mensual</p>
                 </div>
@@ -545,33 +622,6 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Calculation Explanation */}
-        {analysis.hasBudget && (
-          <Card className="hig-card slide-in mb-8">
-            <CardHeader>
-              <CardTitle className="text-xl text-[#3E3E3E] flex items-center gap-2">
-                <Info className="h-5 w-5" />
-                Cómo Calculamos Estas Métricas
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-medium text-[#3E3E3E] mb-2">Leads Proyectados</h4>
-                  <p className="text-gray-600">{metrics.explanation}</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-medium text-[#3E3E3E] mb-2">ROI Calculation</h4>
-                  <p className="text-gray-600">
-                    Basado en {metrics.close_rate}% de cierre, ticket promedio ${Math.round((analysis.benchmark?.avgTicket || 0)/1000)}k, 
-                    menos inversión total mensual.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
@@ -639,26 +689,59 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
           </Card>
         </div>
 
-        {/* Recommendations */}
+        {/* Plan de Acción Personalizado */}
         <Card className="hig-card slide-in mb-8">
           <CardHeader>
-            <CardTitle className="text-xl text-[#3E3E3E]">Acciones Prioritarias</CardTitle>
-            <p className="text-sm text-gray-600">Recomendaciones específicas para tu situación</p>
+            <CardTitle className="text-xl text-[#3E3E3E] flex items-center gap-2">
+              <PlayCircle className="h-6 w-6 text-[#1FA2FF]" />
+              Plan de Acción Personalizado
+            </CardTitle>
+            <p className="text-sm text-gray-600">Pasos específicos y accionables para tu situación</p>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {recommendations.map((rec, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-xl">
-                <div className="flex items-start justify-between mb-2">
+              <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     {rec.icon}
                     <div>
-                      <h4 className="font-medium text-[#3E3E3E]">{rec.title}</h4>
-                      <span className="text-xs text-gray-500">Tiempo: {rec.timeframe}</span>
+                      <h4 className="font-semibold text-[#3E3E3E] text-lg">{rec.title}</h4>
+                      <div className="flex items-center gap-4 mt-1">
+                        <Badge className={`${
+                          rec.priority === 'Crítico' ? 'bg-red-100 text-red-700' :
+                          rec.priority === 'Alto' ? 'bg-orange-100 text-orange-700' :
+                          'bg-blue-100 text-blue-700'
+                        }`}>
+                          {rec.priority}
+                        </Badge>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Timer className="h-4 w-4 mr-1" />
+                          {rec.timeframe}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <Badge className="bg-[#1FA2FF] text-white">{rec.impact}</Badge>
                 </div>
-                <p className="text-sm text-gray-600">{rec.description}</p>
+                
+                <p className="text-gray-600 mb-4">{rec.description}</p>
+                
+                <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                  <h5 className="font-medium text-[#3E3E3E] mb-2">Acciones específicas:</h5>
+                  <ul className="space-y-2">
+                    {rec.actions.map((action, actionIndex) => (
+                      <li key={actionIndex} className="flex items-start gap-2 text-sm">
+                        <CheckSquare className="h-4 w-4 text-[#1FA2FF] mt-0.5 flex-shrink-0" />
+                        <span>{action}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="text-sm text-gray-600">
+                    <strong>Impacto esperado:</strong> {rec.impact}
+                  </div>
+                </div>
               </div>
             ))}
           </CardContent>

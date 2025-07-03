@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -209,7 +210,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
       roi_projection: roi,
       clicks_per_month: clicksPerMonth,
       close_rate: Math.round(closeRate * 100),
-      explanation: `Basado en CPC $${avgCostPerClick}, conversión ${conversionRate.toFixed(1)}%, cierre ${Math.round(closeRate*100)}%, ticket ${(benchmark.avgTicket/1000).toFixed(0)}k.`
+      explanation: `Basado en CPC $${avgCostPerClick}, conversión ${conversionRate.toFixed(1)}%, cierre ${Math.round(closeRate*100)}%, ticket ${Math.round(benchmark.avgTicket/1000)}k.`
     };
   };
 
@@ -492,7 +493,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
                 <div>
                   <p className="text-sm text-gray-600">Presupuesto Mensual</p>
                   <p className="text-2xl font-bold text-[#3E3E3E]">
-                    {businessData.monthlyBudget === 0 ? 'No definido' : `$${(businessData.monthlyBudget / 1000).toFixed(0)}k`}
+                    {businessData.monthlyBudget === 0 ? 'No definido' : `$${Math.round(businessData.monthlyBudget / 1000)}k`}
                   </p>
                   <p className="text-xs text-gray-500">CLP • {businessData.industry}</p>
                 </div>
@@ -535,7 +536,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
                 <div>
                   <p className="text-sm text-gray-600">Costo por Lead</p>
                   <p className="text-2xl font-bold text-[#3E3E3E]">
-                    {metrics.lead_cost === 'N/A' ? 'N/A' : `$${(metrics.lead_cost / 1000).toFixed(1)}k`}
+                    {metrics.lead_cost === 'N/A' ? 'N/A' : `$${Math.round(Number(metrics.lead_cost) / 1000)}k`}
                   </p>
                   <p className="text-xs text-gray-500">promedio estimado</p>
                 </div>
@@ -563,7 +564,7 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h4 className="font-medium text-[#3E3E3E] mb-2">ROI Calculation</h4>
                   <p className="text-gray-600">
-                    Basado en {metrics.close_rate}% de cierre, ticket promedio ${(analysis.benchmark?.avgTicket || 0)/1000}k, 
+                    Basado en {metrics.close_rate}% de cierre, ticket promedio ${Math.round((analysis.benchmark?.avgTicket || 0)/1000)}k, 
                     menos inversión total mensual.
                   </p>
                 </div>

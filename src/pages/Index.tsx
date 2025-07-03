@@ -18,6 +18,7 @@ export interface BusinessData {
   primaryGoal: string;
   currentChallenges: string[];
   timeframe: string;
+  teamSize: string;
 }
 
 export default function Index() {
@@ -72,7 +73,8 @@ export default function Index() {
           monthly_budget: data.monthlyBudget,
           primary_goal: data.primaryGoal,
           current_challenges: data.currentChallenges,
-          timeframe: data.timeframe
+          timeframe: data.timeframe,
+          team_size: data.teamSize
         });
 
       if (dbError) throw dbError;
@@ -108,7 +110,7 @@ export default function Index() {
   };
 
   if (currentView === 'wizard') {
-    return <PlannerWizard onComplete={handlePlannerComplete} onBack={handleBackToStart} />;
+    return <PlannerWizard onComplete={handlePlannerComplete} />;
   }
 
   if (currentView === 'dashboard' && businessData) {

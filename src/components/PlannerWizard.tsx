@@ -30,9 +30,6 @@ export const PlannerWizard = ({ onComplete }: PlannerWizardProps) => {
     teamSize: ''
   });
 
-  console.log('PlannerWizard rendering, current step:', currentStep);
-  console.log('Form data:', formData);
-
   const industries = [
     'E-commerce',
     'Tecnología',
@@ -120,11 +117,9 @@ export const PlannerWizard = ({ onComplete }: PlannerWizardProps) => {
   ];
 
   const handleNext = () => {
-    console.log('handleNext called, current step:', currentStep);
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      console.log('Completing wizard with data:', formData);
       onComplete(formData);
     }
   };
@@ -160,192 +155,173 @@ export const PlannerWizard = ({ onComplete }: PlannerWizardProps) => {
   };
 
   const renderStep = () => {
-    try {
-      switch (currentStep) {
-        case 0:
-          return (
-            <div className="space-y-6">
-              <div>
-                <Label htmlFor="businessName">Nombre de tu empresa *</Label>
-                <Input
-                  id="businessName"
-                  value={formData.businessName}
-                  onChange={(e) => setFormData({...formData, businessName: e.target.value})}
-                  placeholder="Ej: Mi Startup SPA"
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Email de contacto *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  placeholder="tu@email.com"
-                />
-              </div>
-              <div>
-                <Label htmlFor="industry">Industria *</Label>
-                <Select onValueChange={(value) => setFormData({...formData, industry: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona tu industria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {industries.map(industry => (
-                      <SelectItem key={industry} value={industry}>{industry}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+    switch (currentStep) {
+      case 0:
+        return (
+          <div className="space-y-6">
+            <div>
+              <Label htmlFor="businessName">Nombre de tu empresa *</Label>
+              <Input
+                id="businessName"
+                value={formData.businessName}
+                onChange={(e) => setFormData({...formData, businessName: e.target.value})}
+                placeholder="Ej: Mi Startup SPA"
+              />
             </div>
-          );
-
-        case 1:
-          return (
-            <div className="space-y-6">
-              <div>
-                <Label>Presupuesto mensual para marketing *</Label>
-                <div className="space-y-3 mt-2">
-                  {budgetRanges.map(range => (
-                    <div key={range.value} className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id={`budget-${range.value}`}
-                        name="budget"
-                        value={range.value}
-                        checked={formData.monthlyBudget === range.value}
-                        onChange={() => setFormData({...formData, monthlyBudget: range.value})}
-                        className="text-territory-blue"
-                      />
-                      <label htmlFor={`budget-${range.value}`} className="flex-1 cursor-pointer">
-                        <div className="flex justify-between">
-                          <span>{range.label}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {range.display}
-                          </Badge>
-                        </div>
-                      </label>
-                    </div>
+            <div>
+              <Label htmlFor="email">Email de contacto *</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                placeholder="tu@email.com"
+              />
+            </div>
+            <div>
+              <Label htmlFor="industry">Industria *</Label>
+              <Select onValueChange={(value) => setFormData({...formData, industry: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona tu industria" />
+                </SelectTrigger>
+                <SelectContent>
+                  {industries.map(industry => (
+                    <SelectItem key={industry} value={industry}>{industry}</SelectItem>
                   ))}
-                </div>
-              </div>
-              <div>
-                <Label>Objetivo principal *</Label>
-                <Select onValueChange={(value) => setFormData({...formData, primaryGoal: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="¿Cuál es tu meta principal?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {goals.map(goal => (
-                      <SelectItem key={goal} value={goal}>{goal}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="targetAudience">Audiencia objetivo</Label>
-                <Textarea
-                  id="targetAudience"
-                  value={formData.targetAudience}
-                  onChange={(e) => setFormData({...formData, targetAudience: e.target.value})}
-                  placeholder="Ej: Empresarios de 30-50 años en Santiago..."
-                />
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        );
+
+      case 1:
+        return (
+          <div className="space-y-6">
+            <div>
+              <Label>Presupuesto mensual para marketing *</Label>
+              <div className="space-y-3 mt-2">
+                {budgetRanges.map(range => (
+                  <div key={range.value} className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id={`budget-${range.value}`}
+                      name="budget"
+                      value={range.value}
+                      checked={formData.monthlyBudget === range.value}
+                      onChange={() => setFormData({...formData, monthlyBudget: range.value})}
+                      className="text-territory-blue"
+                    />
+                    <label htmlFor={`budget-${range.value}`} className="flex-1 cursor-pointer">
+                      <div className="flex justify-between">
+                        <span>{range.label}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {range.display}
+                        </Badge>
+                      </div>
+                    </label>
+                  </div>
+                ))}
               </div>
             </div>
-          );
-
-        case 2:
-          return (
-            <div className="space-y-6">
-              <div>
-                <Label>Canales de marketing actuales *</Label>
-                <p className="text-sm text-gray-600 mb-3">Selecciona todos los que uses actualmente</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {channels.map(channel => (
-                    <div key={channel} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={channel}
-                        checked={formData.currentChannels.includes(channel)}
-                        onCheckedChange={() => handleCheckboxChange(channel, 'currentChannels')}
-                      />
-                      <Label htmlFor={channel} className="text-sm cursor-pointer">{channel}</Label>
-                    </div>
+            <div>
+              <Label>Objetivo principal *</Label>
+              <Select onValueChange={(value) => setFormData({...formData, primaryGoal: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="¿Cuál es tu meta principal?" />
+                </SelectTrigger>
+                <SelectContent>
+                  {goals.map(goal => (
+                    <SelectItem key={goal} value={goal}>{goal}</SelectItem>
                   ))}
-                </div>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="targetAudience">Audiencia objetivo</Label>
+              <Textarea
+                id="targetAudience"
+                value={formData.targetAudience}
+                onChange={(e) => setFormData({...formData, targetAudience: e.target.value})}
+                placeholder="Ej: Empresarios de 30-50 años en Santiago..."
+              />
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <div>
+              <Label>Canales de marketing actuales *</Label>
+              <p className="text-sm text-gray-600 mb-3">Selecciona todos los que uses actualmente</p>
+              <div className="grid grid-cols-2 gap-2">
+                {channels.map(channel => (
+                  <div key={channel} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={channel}
+                      checked={formData.currentChannels.includes(channel)}
+                      onCheckedChange={() => handleCheckboxChange(channel, 'currentChannels')}
+                    />
+                    <Label htmlFor={channel} className="text-sm cursor-pointer">{channel}</Label>
+                  </div>
+                ))}
               </div>
-              <div>
-                <Label>Principales desafíos *</Label>
-                <p className="text-sm text-gray-600 mb-3">¿Qué te genera más dificultades?</p>
-                <div className="grid grid-cols-1 gap-2">
-                  {challenges.map(challenge => (
-                    <div key={challenge} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={challenge}
-                        checked={formData.currentChallenges.includes(challenge)}
-                        onCheckedChange={() => handleCheckboxChange(challenge, 'currentChallenges')}
-                      />
-                      <Label htmlFor={challenge} className="text-sm cursor-pointer">{challenge}</Label>
-                    </div>
+            </div>
+            <div>
+              <Label>Principales desafíos *</Label>
+              <p className="text-sm text-gray-600 mb-3">¿Qué te genera más dificultades?</p>
+              <div className="grid grid-cols-1 gap-2">
+                {challenges.map(challenge => (
+                  <div key={challenge} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={challenge}
+                      checked={formData.currentChallenges.includes(challenge)}
+                      onCheckedChange={() => handleCheckboxChange(challenge, 'currentChallenges')}
+                    />
+                    <Label htmlFor={challenge} className="text-sm cursor-pointer">{challenge}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <div>
+              <Label>Plazo para ver resultados *</Label>
+              <Select onValueChange={(value) => setFormData({...formData, timeframe: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="¿En cuánto tiempo esperas resultados?" />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeframes.map(timeframe => (
+                    <SelectItem key={timeframe} value={timeframe}>{timeframe}</SelectItem>
                   ))}
-                </div>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
-          );
-
-        case 3:
-          return (
-            <div className="space-y-6">
-              <div>
-                <Label>Plazo para ver resultados *</Label>
-                <Select onValueChange={(value) => setFormData({...formData, timeframe: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="¿En cuánto tiempo esperas resultados?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {timeframes.map(timeframe => (
-                      <SelectItem key={timeframe} value={timeframe}>{timeframe}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Tamaño del equipo *</Label>
-                <Select onValueChange={(value) => setFormData({...formData, teamSize: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="¿Cuántas personas trabajan en marketing?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {teamSizes.map(size => (
-                      <SelectItem key={size} value={size}>{size}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label>Tamaño del equipo *</Label>
+              <Select onValueChange={(value) => setFormData({...formData, teamSize: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="¿Cuántas personas trabajan en marketing?" />
+                </SelectTrigger>
+                <SelectContent>
+                  {teamSizes.map(size => (
+                    <SelectItem key={size} value={size}>{size}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          );
+          </div>
+        );
 
-        default:
-          return <div>Error: Paso no encontrado</div>;
-      }
-    } catch (error) {
-      console.error('Error rendering step:', error);
-      return (
-        <div className="text-center py-8">
-          <p className="text-red-600">Error al cargar el formulario</p>
-          <Button onClick={() => setCurrentStep(0)} className="mt-4">
-            Reiniciar
-          </Button>
-        </div>
-      );
+      default:
+        return null;
     }
   };
-
-  // Safety check para evitar crashes
-  if (currentStep < 0 || currentStep >= steps.length) {
-    console.error('Invalid step:', currentStep);
-    setCurrentStep(0);
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-white py-8 px-4">
@@ -377,9 +353,9 @@ export const PlannerWizard = ({ onComplete }: PlannerWizardProps) => {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl text-territory-dark">
-              {steps[currentStep]?.title || 'Cargando...'}
+              {steps[currentStep].title}
             </CardTitle>
-            <p className="text-gray-600">{steps[currentStep]?.description || ''}</p>
+            <p className="text-gray-600">{steps[currentStep].description}</p>
           </CardHeader>
           <CardContent>
             {renderStep()}

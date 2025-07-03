@@ -28,6 +28,20 @@ interface DashboardProps {
 export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
   console.log('Dashboard rendering with data:', businessData);
 
+  // Industry benchmarks para Chile - moved outside calculateMetrics for global access
+  const industryBenchmarks = {
+    'E-commerce': { avgCPC: 450, conversionRate: 2.8, avgTicket: 35000 },
+    'Tecnología': { avgCPC: 650, conversionRate: 3.5, avgTicket: 125000 },
+    'Servicios Profesionales': { avgCPC: 520, conversionRate: 4.2, avgTicket: 85000 },
+    'Salud': { avgCPC: 480, conversionRate: 3.8, avgTicket: 45000 },
+    'Educación': { avgCPC: 380, conversionRate: 5.1, avgTicket: 95000 },
+    'Restaurantes/Gastronomía': { avgCPC: 320, conversionRate: 6.2, avgTicket: 12000 },
+    'Inmobiliaria': { avgCPC: 580, conversionRate: 1.8, avgTicket: 4500000 },
+    'Turismo': { avgCPC: 420, conversionRate: 3.2, avgTicket: 155000 },
+    'Manufactura': { avgCPC: 510, conversionRate: 2.5, avgTicket: 185000 },
+    'Otro': { avgCPC: 450, conversionRate: 3.0, avgTicket: 65000 }
+  };
+
   // Verificar que tenemos los datos necesarios
   if (!businessData) {
     console.error('No business data provided to Dashboard');
@@ -75,20 +89,6 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
       };
 
       const digitalMaturity = getDigitalMaturityScore();
-
-      // Industry benchmarks para Chile
-      const industryBenchmarks = {
-        'E-commerce': { avgCPC: 450, conversionRate: 2.8, avgTicket: 35000 },
-        'Tecnología': { avgCPC: 650, conversionRate: 3.5, avgTicket: 125000 },
-        'Servicios Profesionales': { avgCPC: 520, conversionRate: 4.2, avgTicket: 85000 },
-        'Salud': { avgCPC: 480, conversionRate: 3.8, avgTicket: 45000 },
-        'Educación': { avgCPC: 380, conversionRate: 5.1, avgTicket: 95000 },
-        'Restaurantes/Gastronomía': { avgCPC: 320, conversionRate: 6.2, avgTicket: 12000 },
-        'Inmobiliaria': { avgCPC: 580, conversionRate: 1.8, avgTicket: 4500000 },
-        'Turismo': { avgCPC: 420, conversionRate: 3.2, avgTicket: 155000 },
-        'Manufactura': { avgCPC: 510, conversionRate: 2.5, avgTicket: 185000 },
-        'Otro': { avgCPC: 450, conversionRate: 3.0, avgTicket: 65000 }
-      };
 
       const benchmark = industryBenchmarks[businessData.industry as keyof typeof industryBenchmarks] || industryBenchmarks['Otro'];
 

@@ -183,12 +183,12 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Process Section optimizado */}
+      {/* Process Section optimizado - SEPARADO EN 4 PUNTOS */}
       <section className="py-20 px-4 bg-gray-50">
         <div className="container mx-auto max-w-6xl text-center">
           <h2 className="text-4xl font-bold text-territory-dark mb-16">Cómo Funciona</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div className="slide-in contain-layout">
               <div className="w-16 h-16 bg-territory-blue text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">1</div>
               <h3 className="text-xl font-semibold text-territory-dark mb-4">Responde 6 preguntas</h3>
@@ -203,8 +203,14 @@ export default function Index() {
             
             <div className="slide-in contain-layout">
               <div className="w-16 h-16 bg-territory-blue text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">3</div>
+              <h3 className="text-xl font-semibold text-territory-dark mb-4">Recibe recomendaciones</h3>
+              <p className="text-gray-600 leading-relaxed">Plan de acción con pasos específicos priorizados por impacto</p>
+            </div>
+
+            <div className="slide-in contain-layout">
+              <div className="w-16 h-16 bg-territory-blue text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">4</div>
               <h3 className="text-xl font-semibold text-territory-dark mb-4">Implementa mejoras</h3>
-              <p className="text-gray-600 leading-relaxed">Aplica las recomendaciones o solicita ayuda de nuestro equipo experto</p>
+              <p className="text-gray-600 leading-relaxed">Aplica las estrategias o solicita ayuda de nuestro equipo experto</p>
             </div>
           </div>
         </div>

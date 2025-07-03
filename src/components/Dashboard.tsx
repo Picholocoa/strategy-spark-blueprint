@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Calendar, Target, TrendingUp, Users, 
   DollarSign, AlertTriangle, CheckCircle, Zap, Phone,
-  BarChart3, Clock, Percent, Activity, Info, HelpCircle
+  BarChart3, Clock, Percent, Activity, Info, HelpCircle,
+  Lightbulb, Settings, Search, MessageCircle, Award
 } from 'lucide-react';
 import { BusinessData } from '@/pages/Index';
 import { BudgetChart } from '@/components/BudgetChart';
@@ -315,46 +315,116 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
 
     if (!analysis.hasBudget) {
       recs.push({
-        title: 'Definir presupuesto de marketing',
+        title: 'Define tu presupuesto de marketing mensual',
         impact: 'Crítico',
-        description: 'Sin presupuesto definido no podemos generar proyecciones específicas ni recomendaciones de canales.',
+        description: 'Para generar un análisis preciso y proyecciones realistas, necesitamos conocer tu inversión mensual aproximada. Esto nos permite calcular ROI, costo por lead y recomendaciones específicas de canales.',
         icon: <DollarSign className="h-5 w-5" />,
-        timeframe: 'Inmediato'
+        timeframe: 'Inmediato',
+        actionItems: [
+          'Define un rango de inversión mensual (ej: $400k-800k)',
+          'Considera el 5-15% de tus ingresos mensuales como referencia',
+          'Incluye costos de herramientas, publicidad y personal'
+        ]
       });
       return recs;
     }
 
+    // Recomendación de medición (crítica)
     if (businessData.currentChallenges.includes('Medir resultados')) {
       recs.push({
-        title: 'Implementar sistema de medición',
+        title: 'Implementa un sistema de medición completo',
         impact: 'Crítico',
-        description: 'Configurar Google Analytics 4, Facebook Pixel y seguimiento de conversiones para optimizar campañas.',
+        description: 'Sin medición no puedes optimizar. El 80% de empresas que miden correctamente mejoran su ROI en 6 meses.',
         icon: <BarChart3 className="h-5 w-5" />,
-        timeframe: '2-3 semanas'
+        timeframe: '2-3 semanas',
+        actionItems: [
+          'Configurar Google Analytics 4 con objetivos de conversión',
+          'Instalar Meta Pixel en tu sitio web',
+          'Implementar seguimiento de llamadas telefónicas',
+          'Crear dashboard semanal con métricas clave (leads, CAC, ROI)'
+        ]
       });
     }
 
+    // Recomendación de canales
     if (analysis.channelEfficiency < 0.5) {
+      const optimalChannels = {
+        'E-commerce': ['Google Ads', 'Facebook Ads', 'Instagram'],
+        'Servicios Profesionales': ['Google Ads', 'LinkedIn Ads', 'SEO'],
+        'Tecnología': ['LinkedIn Ads', 'Google Ads', 'SEO'],
+        'Salud': ['Google Ads', 'Facebook Ads', 'SEO'],
+        'Educación': ['Facebook Ads', 'Instagram', 'Google Ads']
+      };
+      
+      const recommended = optimalChannels[businessData.industry as keyof typeof optimalChannels] || ['Google Ads', 'Facebook Ads'];
+      
       recs.push({
-        title: 'Optimizar mix de canales',
+        title: 'Optimiza tu mix de canales digitales',
         impact: 'Alto',
-        description: `Actualmente usas ${businessData.currentChannels.length} canales. Te recomendamos enfocar en los más efectivos para tu industria.`,
+        description: `Para ${businessData.industry}, los canales más efectivos son: ${recommended.join(', ')}. Tu configuración actual tiene un ${Math.round(analysis.channelEfficiency * 100)}% de eficiencia.`,
         icon: <Target className="h-5 w-5" />,
-        timeframe: '1-2 meses'
+        timeframe: '1-2 meses',
+        actionItems: [
+          `Priorizar inversión en: ${recommended.slice(0, 2).join(' y ')}`,
+          'Pausar canales de bajo rendimiento gradualmente',
+          'Asignar 70% del presupuesto a canales probados',
+          'Testear nuevos canales solo con 10-15% del presupuesto'
+        ]
       });
     }
 
+    // Recomendación de presupuesto
     if (businessData.monthlyBudget < 600000 && businessData.primaryGoal === 'Aumentar ventas') {
       recs.push({
-        title: 'Evaluar incremento de inversión',
+        title: 'Evalúa incrementar tu inversión en marketing',
         impact: 'Medio',
-        description: 'Con presupuesto actual será difícil competir efectivamente. Considera aumentar gradualmente.',
+        description: `Con $${Math.round(businessData.monthlyBudget/1000)}k mensuales será difícil competir en ${businessData.industry}. El benchmark de tu industria es $800k-1.2M mensuales.`,
         icon: <TrendingUp className="h-5 w-5" />,
-        timeframe: '3-6 meses'
+        timeframe: '3-6 meses',
+        actionItems: [
+          'Evaluar incrementar presupuesto en 30-50% gradualmente',
+          'Medir ROI actual antes de aumentar inversión',
+          'Considerar financiamiento para marketing si ROI > 200%',
+          'Reinvertir ganancias iniciales en los canales más rentables'
+        ]
       });
     }
 
-    return recs.slice(0, 3);
+    // Recomendación de calidad de leads
+    if (businessData.currentChallenges.includes('Generar leads de calidad')) {
+      recs.push({
+        title: 'Mejora la calificación y calidad de tus leads',
+        impact: 'Alto',
+        description: 'Leads de mejor calidad aumentan tu tasa de cierre del 15% al 25-35%, reduciendo significativamente tu costo de adquisición.',
+        icon: <Award className="h-5 w-5" />,
+        timeframe: '1-2 meses',
+        actionItems: [
+          'Implementar formularios con preguntas calificadoras',
+          'Crear lead magnets específicos por segmento',
+          'Configurar lead scoring automático',
+          'Entrenar equipo comercial en seguimiento inmediato (<5 min)'
+        ]
+      });
+    }
+
+    // Recomendación de contenido
+    if (businessData.currentChallenges.includes('Crear contenido consistente')) {
+      recs.push({
+        title: 'Automatiza y sistematiza la creación de contenido',
+        impact: 'Medio',
+        description: 'Contenido consistente aumenta la confianza y mejora el SEO. El 70% de empresas B2B con blog generan más leads.',
+        icon: <Lightbulb className="h-5 w-5" />,
+        timeframe: '2-4 semanas',
+        actionItems: [
+          'Crear calendario editorial mensual',
+          'Definir 3-5 temas principales relacionados con tu industria',
+          'Reutilizar contenido: 1 artículo = 5 posts sociales + 1 video',
+          'Usar herramientas como ChatGPT para optimizar producción'
+        ]
+      });
+    }
+
+    return recs.slice(0, 4); // Máximo 4 recomendaciones
   };
 
   const handleConsultationRequest = async () => {
@@ -400,6 +470,19 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
   const metrics = getMarketingMetrics();
   const competitive = getCompetitiveAnalysis();
   const recommendations = getRecommendations();
+
+  // Helper function to format numbers with red color for negatives
+  const formatNumberWithColor = (value: number | string, prefix: string = '', suffix: string = '') => {
+    if (value === 'N/A' || value === undefined) return 'N/A';
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    const isNegative = numValue < 0;
+    const color = isNegative ? 'text-red-500' : 'text-[#3E3E3E]';
+    return (
+      <span className={color}>
+        {prefix}{typeof value === 'number' ? Math.round(value) : value}{suffix}
+      </span>
+    );
+  };
 
   if (showConfirmation) {
     return (
@@ -485,15 +568,18 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
           </CardContent>
         </Card>
 
-        {/* Key Metrics with explanations */}
+        {/* Key Metrics with red for negatives */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="hig-card slide-in">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Presupuesto Mensual</p>
-                  <p className="text-2xl font-bold text-[#3E3E3E]">
-                    {businessData.monthlyBudget === 0 ? 'No definido' : `$${Math.round(businessData.monthlyBudget / 1000)}k`}
+                  <p className="text-2xl font-bold">
+                    {businessData.monthlyBudget === 0 ? 
+                      <span className="text-red-500">No definido</span> : 
+                      formatNumberWithColor(businessData.monthlyBudget / 1000, '$', 'k')
+                    }
                   </p>
                   <p className="text-xs text-gray-500">CLP • {businessData.industry}</p>
                 </div>
@@ -507,7 +593,9 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Leads Proyectados</p>
-                  <p className="text-2xl font-bold text-[#3E3E3E]">{metrics.projected_leads}</p>
+                  <p className="text-2xl font-bold">
+                    {formatNumberWithColor(metrics.projected_leads)}
+                  </p>
                   <p className="text-xs text-gray-500">por mes</p>
                 </div>
                 <Users className="h-8 w-8 text-[#1FA2FF]" />
@@ -520,8 +608,8 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">ROI Proyectado</p>
-                  <p className="text-2xl font-bold text-[#3E3E3E]">
-                    {metrics.roi_projection === 'N/A' ? 'N/A' : `${metrics.roi_projection}%`}
+                  <p className="text-2xl font-bold">
+                    {metrics.roi_projection === 'N/A' ? 'N/A' : formatNumberWithColor(metrics.roi_projection, '', '%')}
                   </p>
                   <p className="text-xs text-gray-500">retorno mensual</p>
                 </div>
@@ -535,8 +623,8 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Costo por Lead</p>
-                  <p className="text-2xl font-bold text-[#3E3E3E]">
-                    {metrics.lead_cost === 'N/A' ? 'N/A' : `$${Math.round(Number(metrics.lead_cost) / 1000)}k`}
+                  <p className="text-2xl font-bold">
+                    {metrics.lead_cost === 'N/A' ? 'N/A' : formatNumberWithColor(Number(metrics.lead_cost) / 1000, '$', 'k')}
                   </p>
                   <p className="text-xs text-gray-500">promedio estimado</p>
                 </div>
@@ -639,28 +727,75 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
           </Card>
         </div>
 
-        {/* Recommendations */}
+        {/* IMPROVED Recommendations Section */}
         <Card className="hig-card slide-in mb-8">
           <CardHeader>
-            <CardTitle className="text-xl text-[#3E3E3E]">Acciones Prioritarias</CardTitle>
-            <p className="text-sm text-gray-600">Recomendaciones específicas para tu situación</p>
+            <CardTitle className="text-xl text-[#3E3E3E] flex items-center gap-2">
+              <Zap className="h-6 w-6 text-[#1FA2FF]" />
+              Plan de Acción Personalizado
+            </CardTitle>
+            <p className="text-sm text-gray-600">Pasos específicos priorizados por impacto para {businessData.businessName}</p>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {recommendations.map((rec, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-xl">
-                <div className="flex items-start justify-between mb-2">
+              <div key={index} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    {rec.icon}
+                    <div className="p-2 bg-blue-50 rounded-lg">
+                      {rec.icon}
+                    </div>
                     <div>
-                      <h4 className="font-medium text-[#3E3E3E]">{rec.title}</h4>
-                      <span className="text-xs text-gray-500">Tiempo: {rec.timeframe}</span>
+                      <h4 className="font-semibold text-[#3E3E3E] text-lg">{rec.title}</h4>
+                      <div className="flex items-center gap-3 mt-1">
+                        <Badge className="bg-[#1FA2FF] text-white">{rec.impact}</Badge>
+                        <span className="text-sm text-gray-500 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {rec.timeframe}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <Badge className="bg-[#1FA2FF] text-white">{rec.impact}</Badge>
+                  <div className="text-2xl font-bold text-[#1FA2FF]">
+                    {index + 1}
+                  </div>
                 </div>
-                <p className="text-sm text-gray-600">{rec.description}</p>
+                
+                <p className="text-gray-600 mb-4 leading-relaxed">{rec.description}</p>
+                
+                {rec.actionItems && (
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h5 className="font-medium text-[#3E3E3E] mb-3 flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Acciones específicas:
+                    </h5>
+                    <ul className="space-y-2">
+                      {rec.actionItems.map((item, itemIndex) => (
+                        <li key={itemIndex} className="flex items-start gap-2 text-sm text-gray-600">
+                          <span className="w-1.5 h-1.5 bg-[#1FA2FF] rounded-full mt-2 flex-shrink-0"></span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             ))}
+            
+            {/* Success tip */}
+            <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl border border-blue-100">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Lightbulb className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-[#3E3E3E] mb-2">💡 Consejo de Implementación</h4>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    <strong>No implementes todo a la vez.</strong> Comienza con la recomendación #1 y dedica 2-3 semanas a ejecutarla completamente antes de pasar a la siguiente. 
+                    El 85% de empresas que siguen este enfoque secuencial ven mejores resultados que las que intentan hacer todo simultáneamente.
+                  </p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -669,18 +804,21 @@ export const Dashboard = ({ businessData, onBackToStart }: DashboardProps) => {
           <CardContent className="p-8 text-center">
             <Phone className="h-12 w-12 mx-auto text-[#1FA2FF] mb-4" />
             <h2 className="text-2xl font-semibold text-[#3E3E3E] mb-4">
-              ¿Quieres implementar estas mejoras?
+              ¿Necesitas ayuda implementando este plan?
             </h2>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Podemos ayudarte a implementar estas recomendaciones específicas y generar los resultados proyectados.
+              Nuestro equipo puede ayudarte a ejecutar estas recomendaciones específicas y generar los resultados proyectados en el tiempo estimado.
             </p>
             <Button 
               onClick={handleConsultationRequest}
               disabled={isRequesting}
               className="hig-button-primary text-lg px-8 py-4"
             >
-              {isRequesting ? 'Enviando...' : 'Agendar Consultoría Gratuita'}
+              {isRequesting ? 'Enviando...' : 'Agendar Consultoría Gratuita de 30 min'}
             </Button>
+            <p className="text-xs text-gray-500 mt-3">
+              ✓ Sin compromiso ✓ Revisión personalizada ✓ Plan de implementación detallado
+            </p>
           </CardContent>
         </Card>
       </div>
